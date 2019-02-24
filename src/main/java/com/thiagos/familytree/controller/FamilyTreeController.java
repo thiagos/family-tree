@@ -2,6 +2,8 @@ package com.thiagos.familytree.controller;
 
 import com.thiagos.familytree.model.request.AddPersonsRequest;
 import com.thiagos.familytree.model.request.AddRelationshipsRequest;
+import com.thiagos.familytree.model.request.GetFamilyTreeRequest;
+import com.thiagos.familytree.model.response.FamilyTreeResponse;
 import com.thiagos.familytree.model.response.GenericResponse;
 import com.thiagos.familytree.service.FamilyTreeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,14 @@ public class FamilyTreeController {
     public GenericResponse addRelationships(@RequestBody AddRelationshipsRequest addRelationshipsRequest) {
         familyTreeService.addRelationships(addRelationshipsRequest.getRelationships());
         return new GenericResponse(0l, "Success");
+    }
+
+    @PostMapping("/getFamilyTree")
+    public FamilyTreeResponse getFamilyTree(@RequestBody GetFamilyTreeRequest getFamilyTreeRequest) {
+        FamilyTreeResponse familyTreeResponse = new FamilyTreeResponse();
+        familyTreeResponse.setResultCode(0l);
+        familyTreeResponse.setData(familyTreeService.getFamilyTree(getFamilyTreeRequest.getPersonId()));
+        return familyTreeResponse;
     }
 
 

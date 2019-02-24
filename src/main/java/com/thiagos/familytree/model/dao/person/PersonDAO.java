@@ -13,6 +13,8 @@ public class PersonDAO {
         this.repository = repository;
     }
 
+    public Person findByPersonId(Long personId) { return repository.findByPersonId(personId); }
+
     public void save(Person person) { repository.save(person); }
 
     public void saveAll(List<Person> persons) { repository.saveAll(persons); }
