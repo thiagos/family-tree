@@ -4,6 +4,9 @@ public class GenericResponse {
     private Long resultCode;
     private String resultMessage;
 
+    public GenericResponse() {
+    }
+
     public GenericResponse(Long resultCode, String resultMessage) {
         this.resultCode = resultCode;
         this.resultMessage = resultMessage;

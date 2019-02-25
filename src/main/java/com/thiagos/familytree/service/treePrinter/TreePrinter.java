@@ -1,8 +1,8 @@
 package com.thiagos.familytree.service.treePrinter;
 
-import com.thiagos.familytree.model.helper.Node;
+import com.thiagos.familytree.util.FamilyNode;
 
 public interface TreePrinter {
 
-    public String printTree(Node root);
+    public FamilyNode printTree(FamilyNode root);
 }

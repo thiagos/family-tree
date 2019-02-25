@@ -10,7 +10,8 @@ import java.util.List;
 @Repository
 public interface RelationshipRepository extends CrudRepository<Relationship, Long> {
 
-    public List<Relationship> findByRelativeIdAndRelationType(Long relativeId, RelationType relationType);
-    public List<Relationship> findByPersonIdAndRelationType(Long personId, RelationType relationType);
+    public List<Relationship> findByPersonId(Long personId);
+    public List<Relationship> findByFatherId(Long fatherId);
+    public List<Relationship> findByMotherId(Long motherId);
 
 }

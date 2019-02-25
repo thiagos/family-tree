@@ -1,11 +1,8 @@
 package com.thiagos.familytree.service.treePrinter;
 
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thiagos.familytree.model.helper.Node;
-
-import javax.swing.tree.TreeNode;
+import com.thiagos.familytree.util.FamilyNode;
 
 /**
  * Prints a tree in a JSON format
@@ -17,11 +14,12 @@ public class JsonTreePrinter implements TreePrinter {
         this.mapper = new ObjectMapper();
     }
 
-    public String printTree(Node root) {
-        JsonNode node = mapper.valueToTree(root);
-        return node.toString();
+    /**
+     * Nothing much to do, Spring will already deserialize the FamilyNode root to a JSON to send the API response
+     * @param root
+     * @return
+     */
+    public FamilyNode printTree(FamilyNode root) {
+        return root;
     }
-
-    //public JsonNode convertTreeToJsonNode(Node root) {
-    //}
 }

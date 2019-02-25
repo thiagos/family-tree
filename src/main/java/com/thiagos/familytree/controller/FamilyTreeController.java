@@ -6,6 +6,8 @@ import com.thiagos.familytree.model.request.GetFamilyTreeRequest;
 import com.thiagos.familytree.model.response.FamilyTreeResponse;
 import com.thiagos.familytree.model.response.GenericResponse;
 import com.thiagos.familytree.service.FamilyTreeService;
+import com.thiagos.familytree.service.treeBuilder.AhnentafelTreeBuilder;
+import com.thiagos.familytree.util.FamilyNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,7 +35,9 @@ public class FamilyTreeController {
     public FamilyTreeResponse getFamilyTree(@RequestBody GetFamilyTreeRequest getFamilyTreeRequest) {
         FamilyTreeResponse familyTreeResponse = new FamilyTreeResponse();
         familyTreeResponse.setResultCode(0l);
-        familyTreeResponse.setData(familyTreeService.getFamilyTree(getFamilyTreeRequest.getPersonId()));
+        familyTreeResponse.setResultMessage("Success");
+        FamilyNode familyNode = familyTreeService.getFamilyTree(getFamilyTreeRequest.getPersonId(), getFamilyTreeRequest.getFamilyTreeType());
+        familyTreeResponse.setFamilyNode(familyNode);
         return familyTreeResponse;
     }
 

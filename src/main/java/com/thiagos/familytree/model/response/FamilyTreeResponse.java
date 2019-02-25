@@ -1,22 +1,16 @@
 package com.thiagos.familytree.model.response;
 
-public class FamilyTreeResponse {
-    private Long resultCode;
-    private String data;
+import com.thiagos.familytree.util.FamilyNode;
 
-    public Long getResultCode() {
-        return resultCode;
+public class FamilyTreeResponse extends GenericResponse {
+
+    private FamilyNode familyNode;
+
+    public FamilyNode getFamilyNode() {
+        return familyNode;
     }
 
-    public void setResultCode(Long resultCode) {
-        this.resultCode = resultCode;
-    }
-
-    public String getData() {
-        return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
+    public void setFamilyNode(FamilyNode familyNode) {
+        this.familyNode = familyNode;
     }
 }

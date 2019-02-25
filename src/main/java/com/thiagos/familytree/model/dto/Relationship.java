@@ -11,8 +11,8 @@ public class Relationship {
     @GeneratedValue
     private Long id;
     private Long personId;
-    private Long relativeId;
-    private RelationType relationType;
+    private Long fatherId;
+    private Long motherId;
 
     public Long getPersonId() {
         return personId;
@@ -22,19 +22,19 @@ public class Relationship {
         this.personId = personId;
     }
 
-    public Long getRelativeId() {
-        return relativeId;
+    public Long getFatherId() {
+        return fatherId;
     }
 
-    public void setRelativeId(Long relativeId) {
-        this.relativeId = relativeId;
+    public void setFatherId(Long fatherId) {
+        this.fatherId = fatherId;
     }
 
-    public RelationType getRelationType() {
-        return relationType;
+    public Long getMotherId() {
+        return motherId;
     }
 
-    public void setRelationType(RelationType relationType) {
-        this.relationType = relationType;
+    public void setMotherId(Long motherId) {
+        this.motherId = motherId;
     }
 }

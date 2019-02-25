@@ -3,21 +3,17 @@ package com.thiagos.familytree.service.treeBuilder;
 import com.thiagos.familytree.model.dao.person.PersonDAO;
 import com.thiagos.familytree.model.dao.relationship.RelationshipDAO;
 import com.thiagos.familytree.model.dto.Person;
-import com.thiagos.familytree.model.dto.RelationType;
 import com.thiagos.familytree.model.dto.Relationship;
-import com.thiagos.familytree.model.helper.Node;
+import com.thiagos.familytree.util.FamilyNode;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.swing.tree.TreeNode;
-import java.util.List;
-
+import org.springframework.stereotype.Component;
 
 /**
  * An Anhentafel Family tree starts at the current person and adds just their ancestors
  */
+@Component
 public class AhnentafelTreeBuilder implements TreeBuilder {
 
-    private Integer maxTreeSize;
     private PersonDAO personDAO;
     private RelationshipDAO relationshipDAO;
 
@@ -27,20 +23,22 @@ public class AhnentafelTreeBuilder implements TreeBuilder {
         this.relationshipDAO = relationshipDAO;
     }
 
-    public Node buildTree(Person person) {
-        Integer currentTreeSize = 0;
+    public FamilyNode buildTree(Person person) {
 
         // root is the current person
-        Node root = new Node(person.getName());
+        FamilyNode root = new FamilyNode(person.getName(), person.getPersonId());
 
         // find parents from DB and add recursively
-        List<Relationship> parents = relationshipDAO.findByPersonIdAndRelationType(person.getPersonId(), RelationType.PARENT);
+        Relationship parents = relationshipDAO.findByPersonId(person.getPersonId());
 
-        for (Relationship parentRelationship: parents) {
-            Person parent = personDAO.findByPersonId(parentRelationship.getRelativeId());
-            root.addChild(buildTree(parent));
+        if (parents != null) {
+            Person father = personDAO.findByPersonId(parents.getFatherId());
+            root.setFather(buildTree(father));
+            Person mother = personDAO.findByPersonId(parents.getMotherId());
+            root.setMother(buildTree(mother));
         }
 
         return root;
     }
+
 }

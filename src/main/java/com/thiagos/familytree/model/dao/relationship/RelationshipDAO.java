@@ -1,6 +1,5 @@
 package com.thiagos.familytree.model.dao.relationship;
 
-import com.thiagos.familytree.model.dto.RelationType;
 import com.thiagos.familytree.model.dto.Relationship;
 import org.springframework.stereotype.Component;
 
@@ -12,12 +11,18 @@ public class RelationshipDAO {
 
     public RelationshipDAO(RelationshipRepository repository) { this.repository = repository; }
 
-    public List<Relationship> findByPersonIdAndRelationType(Long personId, RelationType relationType) {
-        return repository.findByPersonIdAndRelationType(personId, relationType);
+    public Relationship findByPersonId(Long personId) {
+        List<Relationship> relationshipList = repository.findByPersonId(personId);
+        if (relationshipList.isEmpty()) return null;
+        return relationshipList.get(0);
     }
 
-    public List<Relationship> findByRelativeIdAndRelationType(Long relativeId, RelationType relationType) {
-        return repository.findByRelativeIdAndRelationType(relativeId, relationType);
+    public List<Relationship> findByFatherId(Long fatherId) {
+        return repository.findByFatherId(fatherId);
+    }
+
+    public List<Relationship> findByMotherId(Long motherId) {
+        return repository.findByMotherId(motherId);
     }
 
     public void save(Relationship relationship) { repository.save(relationship); }

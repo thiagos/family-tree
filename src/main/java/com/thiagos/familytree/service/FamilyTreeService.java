@@ -2,9 +2,11 @@ package com.thiagos.familytree.service;
 
 import com.thiagos.familytree.model.dao.person.PersonDAO;
 import com.thiagos.familytree.model.dao.relationship.RelationshipDAO;
+import com.thiagos.familytree.model.dto.FamilyTreeType;
 import com.thiagos.familytree.model.dto.Person;
 import com.thiagos.familytree.model.dto.Relationship;
-import com.thiagos.familytree.model.helper.Node;
+import com.thiagos.familytree.service.treeBuilder.DescendantsTreeBuilder;
+import com.thiagos.familytree.util.FamilyNode;
 import com.thiagos.familytree.service.treeBuilder.AhnentafelTreeBuilder;
 import com.thiagos.familytree.service.treeBuilder.TreeBuilder;
 import com.thiagos.familytree.service.treePrinter.JsonTreePrinter;
@@ -19,7 +21,7 @@ public class FamilyTreeService {
 
     private PersonDAO personDAO;
     private RelationshipDAO relationshipDAO;
-    private TreeBuilder treeBuilder;
+    private TreeBuilder ahnentafelTreeBuilder, descendantsTreeBuilder;
     private TreePrinter treePrinter;
 
 
@@ -27,7 +29,11 @@ public class FamilyTreeService {
     public FamilyTreeService(PersonDAO personDAO, RelationshipDAO relationshipDAO) {
         this.personDAO = personDAO;
         this.relationshipDAO = relationshipDAO;
-        treeBuilder = new AhnentafelTreeBuilder(personDAO, relationshipDAO);
+
+        // multiple tree builder implementations
+        ahnentafelTreeBuilder = new AhnentafelTreeBuilder(personDAO, relationshipDAO);
+        descendantsTreeBuilder = new DescendantsTreeBuilder(personDAO, relationshipDAO);
+
         treePrinter = new JsonTreePrinter();
     }
 
@@ -39,9 +45,16 @@ public class FamilyTreeService {
         relationshipDAO.saveAll(relationships);
     }
 
-    public String getFamilyTree(Long personId) {
+    public FamilyNode getFamilyTree(Long personId, FamilyTreeType familyTreeType) {
         Person person = personDAO.findByPersonId(personId);
-        Node familyTreeNode = treeBuilder.buildTree(person);
+
+        TreeBuilder treeBuilder;
+        if (familyTreeType.equals(FamilyTreeType.AHNENTAFEL))
+            treeBuilder = ahnentafelTreeBuilder;
+        else
+            treeBuilder = descendantsTreeBuilder;
+
+        FamilyNode familyTreeNode = treeBuilder.buildTree(person);
         return treePrinter.printTree(familyTreeNode);
     }
 }

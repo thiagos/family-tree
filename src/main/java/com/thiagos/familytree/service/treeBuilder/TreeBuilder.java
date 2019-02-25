@@ -1,9 +1,9 @@
 package com.thiagos.familytree.service.treeBuilder;
 
 import com.thiagos.familytree.model.dto.Person;
-import com.thiagos.familytree.model.helper.Node;
+import com.thiagos.familytree.util.FamilyNode;
 
 public interface TreeBuilder {
 
-    public Node buildTree(Person person);
+    public FamilyNode buildTree(Person person);
 }
