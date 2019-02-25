@@ -4,5 +4,5 @@ import com.thiagos.familytree.util.FamilyNode;
 
 public interface TreePrinter {
 
-    public FamilyNode printTree(FamilyNode root);
+    public Object printTree(FamilyNode root);
 }

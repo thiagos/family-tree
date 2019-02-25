@@ -33,13 +33,39 @@ public class FamilyTreeController {
 
     @PostMapping("/getFamilyTree")
     public FamilyTreeResponse getFamilyTree(@RequestBody GetFamilyTreeRequest getFamilyTreeRequest) {
+        // build response
         FamilyTreeResponse familyTreeResponse = new FamilyTreeResponse();
         familyTreeResponse.setResultCode(0l);
         familyTreeResponse.setResultMessage("Success");
-        FamilyNode familyNode = familyTreeService.getFamilyTree(getFamilyTreeRequest.getPersonId(), getFamilyTreeRequest.getFamilyTreeType());
+
+        // dynamically change treeBuilder
+        familyTreeService.setTreeBuilderByTreeType(getFamilyTreeRequest.getFamilyTreeType());
+
+        // create the tree based on the request personId and populate in the response
+        FamilyNode familyNode = familyTreeService.getFamilyTree(getFamilyTreeRequest.getPersonId());
         familyTreeResponse.setFamilyNode(familyNode);
+
+        familyTreeResponse.setResultMessage(familyTreeService.getTreePrint(familyNode));
+
         return familyTreeResponse;
     }
 
+    @PostMapping("getFamilyTreeText")
+    public GenericResponse getFamilyTreeText(@RequestBody GetFamilyTreeRequest getFamilyTreeRequest) {
+        GenericResponse genericResponse = new GenericResponse();
+        genericResponse.setResultCode(0l);
 
-}
+        // dynamically change treeBuilder
+        familyTreeService.setTreeBuilderByTreeType(getFamilyTreeRequest.getFamilyTreeType());
+
+        // create the tree based on the request personId and populate in the response
+        FamilyNode familyNode = familyTreeService.getFamilyTree(getFamilyTreeRequest.getPersonId());
+
+        genericResponse.setResultMessage(familyTreeService.getTreePrint(familyNode));
+
+        return genericResponse;
+    }
+
+
+
+    }

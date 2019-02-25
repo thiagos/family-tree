@@ -6,6 +6,7 @@ import com.thiagos.familytree.model.dto.FamilyTreeType;
 import com.thiagos.familytree.model.dto.Person;
 import com.thiagos.familytree.model.dto.Relationship;
 import com.thiagos.familytree.service.treeBuilder.DescendantsTreeBuilder;
+import com.thiagos.familytree.service.treePrinter.TextTreePrinter;
 import com.thiagos.familytree.util.FamilyNode;
 import com.thiagos.familytree.service.treeBuilder.AhnentafelTreeBuilder;
 import com.thiagos.familytree.service.treeBuilder.TreeBuilder;
@@ -21,8 +22,8 @@ public class FamilyTreeService {
 
     private PersonDAO personDAO;
     private RelationshipDAO relationshipDAO;
-    private TreeBuilder ahnentafelTreeBuilder, descendantsTreeBuilder;
-    private TreePrinter treePrinter;
+    private TreeBuilder treeBuilder, ahnentafelTreeBuilder, descendantsTreeBuilder;
+    private TreePrinter treePrinter, jsonTreePrinter, textTreePrinter;
 
 
     @Autowired
@@ -34,7 +35,11 @@ public class FamilyTreeService {
         ahnentafelTreeBuilder = new AhnentafelTreeBuilder(personDAO, relationshipDAO);
         descendantsTreeBuilder = new DescendantsTreeBuilder(personDAO, relationshipDAO);
 
-        treePrinter = new JsonTreePrinter();
+        // multiple tree printer implementations
+        jsonTreePrinter = new JsonTreePrinter();
+        textTreePrinter = new TextTreePrinter();
+
+        treePrinter = jsonTreePrinter;
     }
 
     public void addPersons(List<Person> persons) {
@@ -45,16 +50,24 @@ public class FamilyTreeService {
         relationshipDAO.saveAll(relationships);
     }
 
-    public FamilyNode getFamilyTree(Long personId, FamilyTreeType familyTreeType) {
+    public FamilyNode getFamilyTree(Long personId) {
         Person person = personDAO.findByPersonId(personId);
+        FamilyNode familyTreeNode = treeBuilder.buildTree(person);
+        return (FamilyNode) treePrinter.printTree(familyTreeNode);
+    }
 
-        TreeBuilder treeBuilder;
+    /**
+     * Method replacing generic treeBuilder interface instance with concrete implementation
+     * @param familyTreeType
+     */
+    public void setTreeBuilderByTreeType(FamilyTreeType familyTreeType) {
         if (familyTreeType.equals(FamilyTreeType.AHNENTAFEL))
             treeBuilder = ahnentafelTreeBuilder;
         else
             treeBuilder = descendantsTreeBuilder;
+    }
 
-        FamilyNode familyTreeNode = treeBuilder.buildTree(person);
-        return treePrinter.printTree(familyTreeNode);
+    public String getTreePrint(FamilyNode familyNode) {
+        return (String) textTreePrinter.printTree(familyNode);
     }
 }
