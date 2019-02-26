@@ -1,0 +1,39 @@
+{
+  "persons": [
+    {
+      "personId": 1,
+      "name": "David",
+      "gender": "MALE"
+    },
+    {
+      "personId": 2,
+      "name": "Cathy",
+      "gender": "FEMALE"
+    },
+    {
+      "personId": 3,
+      "name": "Emily",
+      "gender": "FEMALE"
+    },
+    {
+      "personId": 4,
+      "name": "Barb",
+      "gender": "FEMALE"
+    },
+    {
+      "personId": 5,
+      "name": "Albert",
+      "gender": "MALE"
+    },
+    {
+      "personId": 6,
+      "name": "Frank",
+      "gender": "MALE"
+    },
+    {
+      "personId": 7,
+      "name": "George",
+      "gender": "MALE"
+    }
+  ]
+}

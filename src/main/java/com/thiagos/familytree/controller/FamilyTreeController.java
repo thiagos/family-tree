@@ -1,12 +1,12 @@
 package com.thiagos.familytree.controller;
 
 import com.thiagos.familytree.model.request.AddPersonsRequest;
-import com.thiagos.familytree.model.request.AddRelationshipsRequest;
+import com.thiagos.familytree.model.request.AddParentsRequest;
 import com.thiagos.familytree.model.request.GetFamilyTreeRequest;
 import com.thiagos.familytree.model.response.FamilyTreeResponse;
+import com.thiagos.familytree.model.response.FamilyTreeTextResponse;
 import com.thiagos.familytree.model.response.GenericResponse;
 import com.thiagos.familytree.service.FamilyTreeService;
-import com.thiagos.familytree.service.treeBuilder.AhnentafelTreeBuilder;
 import com.thiagos.familytree.util.FamilyNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,9 +25,9 @@ public class FamilyTreeController {
         return new GenericResponse(0l, "Success");
     }
 
-    @PostMapping("/addRelationships")
-    public GenericResponse addRelationships(@RequestBody AddRelationshipsRequest addRelationshipsRequest) {
-        familyTreeService.addRelationships(addRelationshipsRequest.getRelationships());
+    @PostMapping("/addParents")
+    public GenericResponse addParents(@RequestBody AddParentsRequest addParentsRequest) {
+        familyTreeService.addParents(addParentsRequest.getParents());
         return new GenericResponse(0l, "Success");
     }
 
@@ -45,25 +45,25 @@ public class FamilyTreeController {
         FamilyNode familyNode = familyTreeService.getFamilyTree(getFamilyTreeRequest.getPersonId());
         familyTreeResponse.setFamilyNode(familyNode);
 
-        familyTreeResponse.setResultMessage(familyTreeService.getTreePrint(familyNode));
-
         return familyTreeResponse;
     }
 
     @PostMapping("getFamilyTreeText")
-    public GenericResponse getFamilyTreeText(@RequestBody GetFamilyTreeRequest getFamilyTreeRequest) {
-        GenericResponse genericResponse = new GenericResponse();
-        genericResponse.setResultCode(0l);
+    public FamilyTreeTextResponse getFamilyTreeText(@RequestBody GetFamilyTreeRequest getFamilyTreeRequest) {
+        FamilyTreeTextResponse familyTreeTextResponse = new FamilyTreeTextResponse();
+        familyTreeTextResponse.setResultCode(0l);
+        familyTreeTextResponse.setResultMessage("Success");
 
         // dynamically change treeBuilder
         familyTreeService.setTreeBuilderByTreeType(getFamilyTreeRequest.getFamilyTreeType());
 
-        // create the tree based on the request personId and populate in the response
+        // create the tree based on the request personId
         FamilyNode familyNode = familyTreeService.getFamilyTree(getFamilyTreeRequest.getPersonId());
 
-        genericResponse.setResultMessage(familyTreeService.getTreePrint(familyNode));
+        // evaluate the text and populate it
+        familyTreeTextResponse.setTreeText(familyTreeService.getTreePrint(familyNode));
 
-        return genericResponse;
+        return familyTreeTextResponse;
     }
 
 

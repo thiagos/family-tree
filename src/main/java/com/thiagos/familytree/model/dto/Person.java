@@ -1,5 +1,8 @@
 package com.thiagos.familytree.model.dto;
 
+import com.thiagos.familytree.util.Gender;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -9,6 +12,7 @@ public class Person {
     @Id
     @GeneratedValue
     private Long id;
+    @Column(unique=true)
     private Long personId;
     private String name;
     private Gender gender;

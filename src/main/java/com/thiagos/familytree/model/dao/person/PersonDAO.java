@@ -1,6 +1,8 @@
 package com.thiagos.familytree.model.dao.person;
 
 import com.thiagos.familytree.model.dto.Person;
+import com.thiagos.familytree.model.exception.DataException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,5 +19,11 @@ public class PersonDAO {
 
     public void save(Person person) { repository.save(person); }
 
-    public void saveAll(List<Person> persons) { repository.saveAll(persons); }
+    public void saveAll(List<Person> persons) {
+        try {
+            repository.saveAll(persons);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataException("Duplicate PersonId attempted, please retry with valid personId(s)");
+        }
+    }
 }

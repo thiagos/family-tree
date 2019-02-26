@@ -2,10 +2,10 @@ package com.thiagos.familytree.service.treeBuilder;
 
 
 import com.thiagos.familytree.model.dao.person.PersonDAO;
-import com.thiagos.familytree.model.dao.relationship.RelationshipDAO;
-import com.thiagos.familytree.model.dto.Gender;
+import com.thiagos.familytree.model.dao.parent.ParentDAO;
+import com.thiagos.familytree.util.Gender;
+import com.thiagos.familytree.model.dto.Parent;
 import com.thiagos.familytree.model.dto.Person;
-import com.thiagos.familytree.model.dto.Relationship;
 import com.thiagos.familytree.util.FamilyNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,33 +20,26 @@ import java.util.List;
 public class DescendantsTreeBuilder implements TreeBuilder {
 
     private PersonDAO personDAO;
-    private RelationshipDAO relationshipDAO;
+    private ParentDAO parentDAO;
 
     @Autowired
-    public DescendantsTreeBuilder(PersonDAO personDAO, RelationshipDAO relationshipDAO) {
+    public DescendantsTreeBuilder(PersonDAO personDAO, ParentDAO parentDAO) {
         this.personDAO = personDAO;
-        this.relationshipDAO = relationshipDAO;
+        this.parentDAO = parentDAO;
     }
 
     public FamilyNode buildTree(Person person) {
-
-        FamilyNode root = new FamilyNode("Descendants Tree", 0l);
-
-        FamilyNode thisPerson = buildTreeInternal(person);
-
-        root.addChild(thisPerson);
-
-        return root;
+        return buildTreeInternal(person);
     }
 
     private FamilyNode buildTreeInternal(Person person) {
-        FamilyNode thisPerson = new FamilyNode(person.getName(), person.getPersonId());
-        List<Relationship> children = getChildren(person);
+        FamilyNode thisPerson = new FamilyNode(person.getName(), person.getPersonId(), person.getGender());
+        List<Parent> children = getChildren(person);
 
         if (!children.isEmpty()) {
             // find the spouse from the first child with bigger id (supposedly most recent), if many
             thisPerson.setSpouse(getSpouse(person, children));
-            for (Relationship childRelation : children) {
+            for (Parent childRelation : children) {
                 Person child = personDAO.findByPersonId(childRelation.getPersonId());
                 thisPerson.addChild(buildTreeInternal(child));
             }
@@ -54,23 +47,23 @@ public class DescendantsTreeBuilder implements TreeBuilder {
         return thisPerson;
     }
 
-    private List<Relationship> getChildren(Person person) {
+    private List<Parent> getChildren(Person person) {
 
-        List<Relationship> children = new ArrayList<>();
+        List<Parent> children = new ArrayList<>();
         // based on gender, lookup by fatherId or motherId
         if (person.getGender().equals(Gender.FEMALE)) {
-            children = relationshipDAO.findByMotherId(person.getPersonId());
+            children = parentDAO.findByMotherId(person.getPersonId());
         } else if (person.getGender().equals(Gender.MALE)) {
-            children = relationshipDAO.findByFatherId(person.getPersonId());
+            children = parentDAO.findByFatherId(person.getPersonId());
         }
         return children;
     }
 
-    private FamilyNode getSpouse(Person person, List<Relationship> children) {
+    private FamilyNode getSpouse(Person person, List<Parent> children) {
 
         // loop through children to find the most recent one (bigger id)
-        Relationship youngestChild = children.get(0);
-        for (Relationship child : children) {
+        Parent youngestChild = children.get(0);
+        for (Parent child : children) {
             if (child.getPersonId() > youngestChild.getPersonId()) {
                 youngestChild = child;
             }
@@ -84,16 +77,16 @@ public class DescendantsTreeBuilder implements TreeBuilder {
             spouseId = youngestChild.getMotherId();
         }
         Person spouse = personDAO.findByPersonId(spouseId);
-        FamilyNode spouseNode = new FamilyNode(spouse.getName(), spouseId);
+        FamilyNode spouseNode = new FamilyNode(spouse.getName(), spouseId, spouse.getGender());
 
         // add all common children to spouse
-        for (Relationship childRelation : children) {
+        for (Parent childRelation : children) {
             if (person.getGender().equals(Gender.FEMALE) && childRelation.getFatherId() == spouseId) {
                 Person child = personDAO.findByPersonId(childRelation.getPersonId());
-                spouseNode.addChild(new FamilyNode(child.getName(), child.getPersonId()));
+                spouseNode.addChild(new FamilyNode(child.getName(), child.getPersonId(), child.getGender()));
             } else if (person.getGender().equals(Gender.MALE) && childRelation.getMotherId() == spouseId ){
                 Person child = personDAO.findByPersonId(childRelation.getPersonId());
-                spouseNode.addChild(new FamilyNode(child.getName(), child.getPersonId()));
+                spouseNode.addChild(new FamilyNode(child.getName(), child.getPersonId(), child.getGender()));
             }
 
         }

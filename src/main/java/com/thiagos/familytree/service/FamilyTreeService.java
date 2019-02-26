@@ -1,10 +1,11 @@
 package com.thiagos.familytree.service;
 
 import com.thiagos.familytree.model.dao.person.PersonDAO;
-import com.thiagos.familytree.model.dao.relationship.RelationshipDAO;
-import com.thiagos.familytree.model.dto.FamilyTreeType;
+import com.thiagos.familytree.model.dao.parent.ParentDAO;
+import com.thiagos.familytree.util.FamilyTreeType;
 import com.thiagos.familytree.model.dto.Person;
-import com.thiagos.familytree.model.dto.Relationship;
+import com.thiagos.familytree.model.dto.Parent;
+import com.thiagos.familytree.model.exception.DataException;
 import com.thiagos.familytree.service.treeBuilder.DescendantsTreeBuilder;
 import com.thiagos.familytree.service.treePrinter.TextTreePrinter;
 import com.thiagos.familytree.util.FamilyNode;
@@ -21,19 +22,19 @@ import java.util.List;
 public class FamilyTreeService {
 
     private PersonDAO personDAO;
-    private RelationshipDAO relationshipDAO;
+    private ParentDAO parentDAO;
     private TreeBuilder treeBuilder, ahnentafelTreeBuilder, descendantsTreeBuilder;
     private TreePrinter treePrinter, jsonTreePrinter, textTreePrinter;
 
 
     @Autowired
-    public FamilyTreeService(PersonDAO personDAO, RelationshipDAO relationshipDAO) {
+    public FamilyTreeService(PersonDAO personDAO, ParentDAO parentDAO) {
         this.personDAO = personDAO;
-        this.relationshipDAO = relationshipDAO;
+        this.parentDAO = parentDAO;
 
         // multiple tree builder implementations
-        ahnentafelTreeBuilder = new AhnentafelTreeBuilder(personDAO, relationshipDAO);
-        descendantsTreeBuilder = new DescendantsTreeBuilder(personDAO, relationshipDAO);
+        ahnentafelTreeBuilder = new AhnentafelTreeBuilder(personDAO, parentDAO);
+        descendantsTreeBuilder = new DescendantsTreeBuilder(personDAO, parentDAO);
 
         // multiple tree printer implementations
         jsonTreePrinter = new JsonTreePrinter();
@@ -46,12 +47,14 @@ public class FamilyTreeService {
         personDAO.saveAll(persons);
     }
 
-    public void addRelationships(List<Relationship> relationships) {
-        relationshipDAO.saveAll(relationships);
+    public void addParents(List<Parent> parents) {
+        parentDAO.saveAll(parents);
     }
 
     public FamilyNode getFamilyTree(Long personId) {
         Person person = personDAO.findByPersonId(personId);
+        if (person == null)
+            throw new DataException("Person with id (" + personId + ") not found, please retry with a valid personId");
         FamilyNode familyTreeNode = treeBuilder.buildTree(person);
         return (FamilyNode) treePrinter.printTree(familyTreeNode);
     }

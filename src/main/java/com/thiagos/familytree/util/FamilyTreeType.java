@@ -1,4 +1,4 @@
-package com.thiagos.familytree.model.dto;
+package com.thiagos.familytree.util;
 
 public enum FamilyTreeType {
     AHNENTAFEL,

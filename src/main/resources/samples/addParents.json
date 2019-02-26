@@ -1,0 +1,19 @@
+{
+  "parents": [
+    {
+      "personId": 3,
+      "fatherId": 1,
+      "motherId": 2
+    },
+    {
+      "personId": 2,
+      "fatherId": 5,
+      "motherId": 4
+    },
+    {
+      "personId": 7,
+      "motherId": 3,
+      "fatherId": 6
+    }
+  ]
+}

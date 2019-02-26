@@ -12,14 +12,17 @@ import java.util.List;
 public class FamilyNode {
     private String name;
     private Long personId;
+    private Gender gender;
     private List<FamilyNode> children;
     private FamilyNode father;
     private FamilyNode mother;
     private FamilyNode spouse;
+    private String relationToMain;
 
-    public FamilyNode(String name, Long personId) {
+    public FamilyNode(String name, Long personId, Gender gender) {
         this.name = name;
         this.personId = personId;
+        this.gender = gender;
     }
 
     public String getName() {
@@ -73,5 +76,21 @@ public class FamilyNode {
 
     public void setSpouse(FamilyNode spouse) {
         this.spouse = spouse;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public String getRelationToMain() {
+        return relationToMain;
+    }
+
+    public void setRelationToMain(String relationToMain) {
+        this.relationToMain = relationToMain;
     }
 }

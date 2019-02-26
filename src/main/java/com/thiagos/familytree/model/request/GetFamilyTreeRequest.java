@@ -1,6 +1,6 @@
 package com.thiagos.familytree.model.request;
 
-import com.thiagos.familytree.model.dto.FamilyTreeType;
+import com.thiagos.familytree.util.FamilyTreeType;
 
 public class GetFamilyTreeRequest {
     private Long personId;

@@ -1,53 +1,44 @@
 package com.thiagos.familytree.service.treePrinter;
 
-import com.thiagos.familytree.model.dto.Ancestry;
-import com.thiagos.familytree.model.dto.Gender;
+import com.thiagos.familytree.util.Ancestry;
 import com.thiagos.familytree.util.FamilyNode;
-
+import com.thiagos.familytree.util.RelationshipEvaluator;
 
 public class TextTreePrinter implements TreePrinter {
 
-
     public String printTree(FamilyNode root) {
-        return printTreeInternal(root, 0, null, null);
+        return printTreeInternal(root, 0, null);
     }
 
-    private String printTreeInternal(FamilyNode node, Integer level, Gender gender, Ancestry ancestry) {
+    private String printTreeInternal(FamilyNode node, Integer level, Ancestry ancestry) {
 
         if (node == null) return "";
 
-        String textTree = getRelation(level, gender, ancestry) + node.getName() + "\n";
-
-        // TODO add children
-        //String childrenText = "";
-
+        String selfDescription = RelationshipEvaluator.getRelation(level, node.getGender(), ancestry) + ": " + node.getName() + ", ";
 
         level++;
-        return textTree +
-                printTreeInternal(node.getFather(), level, Gender.MALE, Ancestry.ANCESTOR) +
-                printTreeInternal(node.getMother(), level, Gender.FEMALE, Ancestry.ANCESTOR);
-    }
 
-    private String getRelation(Integer level, Gender gender, Ancestry ancestry) {
-
-        if (level == 0)
-            return "self: ";
-
-        String relation = "";
-        if (ancestry.equals(Ancestry.ANCESTOR)) {
-            relation = "father: ";
-            if (gender.equals(Gender.FEMALE))
-                relation = "mother: ";
-        } else {
-            relation = "child: ";
+        // create a string recursively for all children, if any
+        String childrenText = "";
+        if ( node.getChildren() != null) {
+            for (FamilyNode childNode : node.getChildren()) {
+                childrenText += printTreeInternal(childNode, level, Ancestry.DESCENDANT);
+            }
         }
 
-        if (level > 1)
-            relation = "grand" + relation;
+        // add spouse, but no spouse's relatives for now
+        String spouseText = "";
+        if (node.getSpouse() != null) {
+            spouseText = "with spouse: " + node.getSpouse().getName() + ", ";
+        }
 
-        for (int i = 0; i < level - 2; i++)
-            relation = "great-" + relation;
-
-        return relation;
+        // add the parents trees too
+        return  selfDescription +
+                spouseText +
+                printTreeInternal(node.getFather(), level, Ancestry.ANCESTOR) +
+                printTreeInternal(node.getMother(), level, Ancestry.ANCESTOR) +
+                childrenText;
     }
+
+
 }

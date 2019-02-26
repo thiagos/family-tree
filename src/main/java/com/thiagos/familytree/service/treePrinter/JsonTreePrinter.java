@@ -1,12 +1,11 @@
 package com.thiagos.familytree.service.treePrinter;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thiagos.familytree.util.FamilyNode;
+import org.springframework.stereotype.Component;
 
-/**
- * Prints a tree in a JSON format
- */
+
+@Component
 public class JsonTreePrinter implements TreePrinter {
 
     private ObjectMapper mapper;
