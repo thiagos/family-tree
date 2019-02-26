@@ -1,5 +1,5 @@
 # Family Tree Application
-This application manages persons and their  parents, organizing them into a family tree.
+This application manages persons and their parent-child relationships, organizing them into a family tree.
 
 ## APIs
 
@@ -61,10 +61,10 @@ Allows a bulk insertion of parents, as a list of JSON entities:
 Each JSON element is like a "birth certificate", indicating who are the father and mother of a specific person.
 
 ### getFamilyTree
-Retrieves the family tree for a given Person.
+Retrieves the family tree for a given Person in a JSON format.
 ````
 {
-  "personId": 3
+  "personId": 7
   "familyTreeType": AHNENTAFEL
 }
 ````
@@ -77,6 +77,69 @@ Another tree can focus only on *descendants*, while a third type could consist o
 Two trees were implemented with the values accepted on *familyTreeType* field: 
 - AHNENTAFEL
 - DESCENDANTS
+
+This API returns a familyTreeResponse:
+
+````
+{
+    "resultCode": 0,
+    "resultMessage": "Success",
+    "familyNode": {
+        "name": "George",
+        "personId": 7,
+        "gender": "MALE",
+        "father": {
+            "name": "Frank",
+            "personId": 6,
+            "gender": "MALE"
+        },
+        "mother": {
+            "name": "Emily",
+            "personId": 3,
+            "gender": "FEMALE",
+            "father": {
+                "name": "David",
+                "personId": 1,
+                "gender": "MALE"
+            },
+            "mother": {
+                "name": "Cathy",
+                "personId": 2,
+                "gender": "FEMALE",
+                "father": {
+                    "name": "Albert",
+                    "personId": 5,
+                    "gender": "MALE"
+                },
+                "mother": {
+                    "name": "Barb",
+                    "personId": 4,
+                    "gender": "FEMALE"
+                }
+            }
+        }
+    }
+}
+````
+
+### getFamilyTreeText
+Retrieves the family tree again, but now returns a text description of the family instead of a full family JSON response.
+````
+{
+  "personId": 4
+  "familyTreeType": DESCENDANTS
+}
+````
+
+With a text description of the family in 'treeText' response field:
+
+````
+{
+    "resultCode": 0,
+    "resultMessage": "Success",
+    "treeText": "self: Barb, with spouse: Albert, daughter: Cathy, with spouse: David, granddaughter: Emily, with spouse: Frank, great-grandson: George, "
+}
+````
 
 ## Running the application
 
